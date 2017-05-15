@@ -1,0 +1,10 @@
+1 laravel安装依赖 composer
+
+参考 https://github.com/generalbao/PHP/blob/master/composer
+
+2 composer create-project --prefer-dist laravel/laravel blog "5.2.*"
+
+安装后没有vendor，原来是报错了,有一些函数用不了,停止了后面的代码
+proc_open
+proc_get_status()
+在php.ini 找到disable_functions 去掉上面两个,当然安装完成后为了安装,可以加回去
