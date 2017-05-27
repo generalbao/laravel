@@ -1,0 +1,92 @@
+基础控制器
+这里是一个基础控制器类的例子：
+
+<?php namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+
+class UserController extends Controller {
+
+    /**
+     * 显示所给定的用户个人数据。
+     *
+     * @param  int  $id
+     * @return Response
+     */
+    public function showProfile($id)
+    {
+        return view('user.profile', ['user' => User::findOrFail($id)]);
+    }
+
+}
+我们可以通过如下方式引导路由至对应的控制器动作：
+
+Route::get('user/{id}', 'UserController@showProfile');
+注意： 所有的控制器都应该扩展基础控制器类。
+
+控制器和命名空间
+
+有一点非常重要，那就是我们无需指明完整的控制器命名空间，在类名称中  App\Http\Controllers 之后的部分即可用于表示「根」命名空间。 RouteServiceProvider 默认会在包含根控制器命名空间的路由群组中，加载 routes.php 此文件。
+
+若你要在 App\Http\Controllers 此目录深层使用 PHP 命名空间以嵌套化或组织你的控制器，只要使用相对于 App\Http\Controllers 根命名空间的特定类名称即可。因此，若你的控制器类全名为  App\Http\Controllers\Photos\AdminController，你可以像这样注册一个路由：
+
+Route::get('foo', 'Photos\AdminController@method');
+
+控制器中间件
+中间件 可在控制器路由中指定，例如：
+
+Route::get('profile', [
+    'middleware' => 'auth',
+    'uses' => 'UserController@showProfile'
+]);
+此外，你也可以在控制器构造器中指定中间件 ：
+
+class UserController extends Controller {
+
+    /**
+     * 建立一个新的 UserController 实例。
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+
+        $this->middleware('log', ['only' => ['fooAction', 'barAction']]);
+
+        $this->middleware('subscribed', ['except' => ['fooAction', 'barAction']]);
+    }
+
+}
+
+
+RESTful 资源控制器
+资源控制器可让你无痛建立和资源相关的 RESTful 控制器。例如，你可能希望创建一个控制器，它可用来处理针对你的应用程序所保存相片的 HTTP 请求。我们可以使用 make:controller Artisan 命令，快速创建这样的控制器：
+
+php artisan make:controller PhotoController
+接着，我们注册一个指向此控制器的资源路由：
+
+Route::resource('photo', 'PhotoController');
+此单一路由声明创建了多个路由，用来处理各式各样和相片资源相关的 RESTful 行为。同样地，产生的控制器已有各种和这些行为绑定的方法，包含用来通知你它们处理了那些 URI 及动词。
+
+由资源控制器处理的行为
+
+动词	路径	行为	路由名称
+GET	/photo	索引	photo.index
+GET	/photo/create	创建	photo.create
+POST	/photo	保存	photo.store
+GET	/photo/{photo}	显示	photo.show
+GET	/photo/{photo}/edit	编辑	photo.edit
+PUT/PATCH	/photo/{photo}	更新	photo.update
+DELETE	/photo/{photo}	删除	photo.destroy
+自定义资源路由
+
+除此之外，你也可以指定让路由仅处理一部分的行为：
+
+Route::resource('photo', 'PhotoController',
+                ['only' => ['index', 'show']]);
+
+Route::resource('photo', 'PhotoController',
+                ['except' => ['create', 'store', 'update', 'destroy']]);
+所有的资源控制器行为默认都有个路由名称。然而你可在选项中传递一个 names 数组来重载这些名称：
+
+Route::resource('photo', 'PhotoController',
+                ['names' => ['create' => 'photo.build']]);
