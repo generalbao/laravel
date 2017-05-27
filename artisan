@@ -1,0 +1,9 @@
+artisan生成controller
+当通过composer安装laravel的时候 根目录会有 artisan文件
+
+可以通过 php artisan list 查看artisan支持的命令
+
+php artisan make:controller TestController 默认在app\Http\Controller下
+php artisan make:controller Admin\TestController 在app\Http\Controller\Admin下
+
+未完待续
