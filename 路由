@@ -1,0 +1,77 @@
+基本 GET 路由
+
+Route::get('/', function()
+{
+    return 'Hello World';
+});
+
+其他基础路由
+
+Route::post('foo/bar', function()
+{
+    return 'Hello World';
+});
+
+基础路由参数
+
+Route::get('user/{id}', function($id)
+{
+    return 'User '.$id;
+});
+注意： 路由参数不能包含 - 字符。使用下划线替代 (_)。
+可选择的路由参数
+
+Route::get('user/{name?}', function($name = null)
+{
+    return $name;
+});
+带默认值的路由参数
+
+Route::get('user/{name?}', function($name = 'John')
+{
+    return $name;
+});
+使用正则表达式限制参数
+
+Route::get('user/{name}', function($name)
+{
+    //
+})
+->where('name', '[A-Za-z]+');
+
+命名路由
+命名路由让你更方便于产生 URL 与重定向特定路由。您可以用 as 的数组键值指定名称给路由：
+
+Route::get('user/profile', ['as' => 'profile', function()
+{
+    //
+}]);
+也可以为控制器动作指定路由名称：
+
+Route::get('user/profile', [
+    'as' => 'profile', 'uses' => 'UserController@showProfile'
+]);
+
+
+路由群组
+有时候你的许多路由会有公用的需求，例如 URL 区段 (segments)、中间件、命名空间等等。你可以利用路由群组套用这些属性到多个路由，而不用每个路由都设置一次。
+
+将共享属性作为一个数组当做 Route::group 第一个参数。
+
+
+Middleware
+在群组共享属性数组的 middleware 参数定义中间件列表，这些中间件就会应用到群组内的所有路由上。中间件将会按在列表内指定的顺序执行：
+
+Route::group(['middleware' => ['foo', 'bar']], function()
+{
+    Route::get('/', function()
+    {
+        // Has Foo And Bar Middleware
+    });
+
+    Route::get('user/profile', function()
+    {
+        // Has Foo And Bar Middleware
+    });
+
+});
