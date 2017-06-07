@@ -1,0 +1,14 @@
+2017年6月7日19:11:42
+
+1 Method Not Allowed Http Exception
+ajax用post  laravel用get 所以错了
+
+2 在使用post或者put等方法请求时，有时会报TokenMismatchException in VerifyCsrfToken.php line 67错误。原因是laravel默认开启了防CSRF。
+
+从 CSRF 保护中排除指定 URL
+比如所访问的URL为http://laravel.com/photo/12，现在想排除关于photo资源的路由，则在App\Http\Middleware\VerifyCsrfToken::class中添加路由如下：
+
+protected $except = [
+        'photo',
+        'photo/*',
+    ];
